@@ -6,6 +6,7 @@ using MonoGame.Aseprite.Content.Processors;
 using MonoGame.Aseprite.Sprites;
 using RetroHeroes.Sprites;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace RetroHeroes
@@ -27,6 +28,11 @@ namespace RetroHeroes
         // Heros
         private WizardSprite wizard;
 
+        // Projectiles
+        private WizardFireballSprite[] wizardProjectiles = new WizardFireballSprite[4];
+        private int fireballsShown = 0;
+        private float timeSinceLastFireball = 0.75f;
+
         public RetroHeroes()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -38,6 +44,10 @@ namespace RetroHeroes
         {
             // TODO: Add your initialization logic here
             wizard = new WizardSprite();
+            wizardProjectiles[0] = new WizardFireballSprite();
+            wizardProjectiles[1] = new WizardFireballSprite();
+            wizardProjectiles[2] = new WizardFireballSprite();
+            wizardProjectiles[3] = new WizardFireballSprite();
 
             base.Initialize();
         }
@@ -63,15 +73,38 @@ namespace RetroHeroes
             sprite3 = dungeonItemAtlas.CreateSprite("Key");
 
             wizard.LoadContent(Content);
+            foreach (WizardFireballSprite fireball in wizardProjectiles)
+            {
+                fireball.LoadContent(Content);
+            }
             Yoster = Content.Load<SpriteFont>("Yoster");
         }
 
         protected override void Update(GameTime gameTime)
         {
+            // Wizard Logic
             if (wizard.Exit) Exit();
-
-            // TODO: Add your update logic here
             wizard.Update(gameTime);
+
+            // Fireball Logic
+            bool newFireball = false;
+            foreach ( WizardFireballSprite fireball in wizardProjectiles )
+            {
+                bool before = fireball.Shown;
+                if (!before && timeSinceLastFireball > 0.75 && !newFireball && Mouse.GetState().LeftButton == ButtonState.Pressed)
+                {
+                    newFireball = true;
+                    fireball.Update(gameTime, wizard.position, graphics.GraphicsDevice);
+                    timeSinceLastFireball = 0;
+                    break;
+                }
+
+                if( before )
+                {
+                    fireball.Update(gameTime, wizard.position, graphics.GraphicsDevice);
+                }
+            }
+            timeSinceLastFireball += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -86,6 +119,10 @@ namespace RetroHeroes
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             wizard.Draw(gameTime, spriteBatch);
+            foreach (WizardFireballSprite fireball in wizardProjectiles)
+            {
+                fireball.Draw(gameTime, spriteBatch);
+            }
             spriteBatch.DrawString(Yoster, "Retro Heroes", title, Color.Goldenrod);
             spriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
             sprite1.Scale = new Vector2(1.5f);

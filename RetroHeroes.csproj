@@ -12,6 +12,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\WizardFireProjectile.aseprite" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MonoGame.Aseprite" Version="5.1.0" />
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />

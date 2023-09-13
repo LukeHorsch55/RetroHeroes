@@ -20,7 +20,7 @@ namespace RetroHeroes.Sprites
         private Texture2D texture;
         public bool Exit = false;
 
-        private Vector2 position = new Vector2(200, 200);
+        public Vector2 position = new Vector2(200, 200);
 
         /// Animation Variables
         private bool flipped;
@@ -100,6 +100,17 @@ namespace RetroHeroes.Sprites
                 texture = idleTexture;
             }
 
+            MouseState ms = Mouse.GetState();
+            if (ms.LeftButton == ButtonState.Pressed && ms.X > position.X && flipped == true)
+            {
+                flipped = false;
+            }
+
+            if (ms.LeftButton == ButtonState.Pressed && ms.X < position.X && flipped == false)
+            {
+                flipped = true;
+            }
+
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit = true;
@@ -125,7 +136,7 @@ namespace RetroHeroes.Sprites
 
             bool isIdle = texture == idleTexture;
             var scale = isIdle ? 32 : 64;
-            var source = new Rectangle(animationFrame * scale, isIdle ? 0 : 16, scale, isIdle ? 32 : 48);
+            var source = new Rectangle((isIdle && animationFrame > 3 ? animationFrame % 3 : animationFrame) * scale, isIdle ? 0 : 16, scale, isIdle ? 32 : 48);
             SpriteEffects effect = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             spriteBatch.Draw(texture, position, source, Color.White, 0.0f, new Vector2(scale/2,isIdle ? 32 : 48), 1.5f, effect, 0);
         }
