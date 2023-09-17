@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Aseprite;
@@ -29,9 +30,12 @@ namespace RetroHeroes
         private WizardSprite wizard;
 
         // Projectiles
-        private WizardFireballSprite[] wizardProjectiles = new WizardFireballSprite[4];
-        private int fireballsShown = 0;
+        private WizardFireballSprite[] wizardProjectiles = new WizardFireballSprite[6];
         private float timeSinceLastFireball = 0.75f;
+
+        // Enemies
+        private BrownGoober[] brownGoobers = new BrownGoober[2];
+        public SoundEffect fireballHit;
 
         public RetroHeroes()
         {
@@ -48,6 +52,12 @@ namespace RetroHeroes
             wizardProjectiles[1] = new WizardFireballSprite();
             wizardProjectiles[2] = new WizardFireballSprite();
             wizardProjectiles[3] = new WizardFireballSprite();
+            wizardProjectiles[4] = new WizardFireballSprite();
+            wizardProjectiles[5] = new WizardFireballSprite();
+
+            Texture2D enemiesAtlas = Content.Load<Texture2D>("EnemiesAtlas");
+            brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(450, 450));
+            brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(650, 250));
 
             base.Initialize();
         }
@@ -72,6 +82,7 @@ namespace RetroHeroes
             sprite2 = dungeonItemAtlas.CreateSprite("ChestOpen");
             sprite3 = dungeonItemAtlas.CreateSprite("Key");
 
+            fireballHit = Content.Load<SoundEffect>("FireballSound");
             wizard.LoadContent(Content);
             foreach (WizardFireballSprite fireball in wizardProjectiles)
             {
@@ -85,13 +96,25 @@ namespace RetroHeroes
             // Wizard Logic
             if (wizard.Exit) Exit();
             wizard.Update(gameTime);
+            brownGoobers[0].Update(gameTime, wizard.position);
+            brownGoobers[1].Update(gameTime, wizard.position);
 
             // Fireball Logic
             bool newFireball = false;
             foreach ( WizardFireballSprite fireball in wizardProjectiles )
             {
+                foreach( BrownGoober goober in brownGoobers)
+                {   
+                    if (fireball.Bounds.CollidesWith(goober.Bounds) && fireball.Shown)
+                    {
+                        goober.Hit = true;
+                        fireball.position = new Vector2(-200, -200);
+                        fireball.Shown = false;
+                        fireballHit.Play();
+                    }
+                }
                 bool before = fireball.Shown;
-                if (!before && timeSinceLastFireball > 0.75 && !newFireball && Mouse.GetState().LeftButton == ButtonState.Pressed)
+                if (!before && timeSinceLastFireball > 0.50 && !newFireball && Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
                     newFireball = true;
                     fireball.Update(gameTime, wizard.position, graphics.GraphicsDevice);
@@ -119,6 +142,8 @@ namespace RetroHeroes
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             wizard.Draw(gameTime, spriteBatch);
+            brownGoobers[0].Draw(gameTime, spriteBatch);
+            brownGoobers[1].Draw(gameTime, spriteBatch);
             foreach (WizardFireballSprite fireball in wizardProjectiles)
             {
                 fireball.Draw(gameTime, spriteBatch);

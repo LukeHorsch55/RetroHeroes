@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MonoGame.Aseprite;
 using MonoGame.Aseprite.Content.Processors;
 using MonoGame.Aseprite.Sprites;
+using CollisionExample.Collisions;
 
 namespace RetroHeroes.Sprites
 {
@@ -26,6 +27,9 @@ namespace RetroHeroes.Sprites
         /// Animation Variables
         private double animationTimer;
         private short animationFrame = 1;
+
+        // Collision
+        public BoundingCircle Bounds;
 
         /// <summary>
         /// Loads the sprite texture using the provided ContentManager
@@ -47,7 +51,7 @@ namespace RetroHeroes.Sprites
             if (mouseState.LeftButton == ButtonState.Pressed && Shown == false)
             {
                 Vector2 adjCharacterPosition = new Vector2(characterPosition.X, characterPosition.Y - 30);
-                Vector2 shotAngle = new Vector2(mouseState.X, mouseState.Y) - (characterPosition);
+                Vector2 shotAngle = new Vector2(mouseState.X, mouseState.Y) - (adjCharacterPosition);
                 shotAngle.Normalize();
                 position = adjCharacterPosition + shotAngle * 10;
                 velocity = shotAngle;
@@ -56,6 +60,7 @@ namespace RetroHeroes.Sprites
             }
 
             position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 300;
+            Bounds = new BoundingCircle(position, 12);
 
             if (position.X < 0 || position.Y < 0 || position.X > gd.Viewport.Width || position.Y < -gd.Viewport.Height)
             {
@@ -67,7 +72,7 @@ namespace RetroHeroes.Sprites
         /// Draws the sprite using the supplied SpriteBatch
         /// </summary>
         /// <param name="gameTime">The game time</param>
-        /// <param name="spriteBatch">The spritebatch to render with</param>
+        /// <param name="spriteBatch">The spritebatch to render with</param> 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             animationTimer += gameTime.ElapsedGameTime.TotalSeconds;

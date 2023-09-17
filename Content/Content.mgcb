@@ -14,6 +14,36 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin EnemiesAtlas.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:EnemiesAtlas.png
+
+#begin FireballSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FireballSound.wav
+
+#begin FireballSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FireballSound.wav
+
+#begin FireballSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:FireballSound.wav
+
 #begin wizarddeath.png
 /importer:TextureImporter
 /processor:TextureProcessor
