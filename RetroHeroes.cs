@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Aseprite;
 using MonoGame.Aseprite.Content.Processors;
 using MonoGame.Aseprite.Sprites;
+using RetroHeroes.Screens;
 using RetroHeroes.Sprites;
+using RetroHeroes.StateManagement;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -15,149 +17,42 @@ namespace RetroHeroes
     public class RetroHeroes : Game
     {
         private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
-
-        // Fonts
-        private SpriteFont Yoster;
-
-        // Dungeon
-        TextureAtlas dungeonItemAtlas;
-        private Sprite sprite1;
-        private Sprite sprite2;
-        private Sprite sprite3;
-
-        // Heros
-        private WizardSprite wizard;
-
-        // Projectiles
-        private WizardFireballSprite[] wizardProjectiles = new WizardFireballSprite[6];
-        private float timeSinceLastFireball = 0.75f;
-
-        // Enemies
-        private BrownGoober[] brownGoobers = new BrownGoober[2];
-        public SoundEffect fireballHit;
+        private ScreenManager screenManager;
 
         public RetroHeroes()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            var screenFactory = new ScreenFactory();
+            Services.AddService(typeof(IScreenFactory), screenFactory);
+
+            screenManager = new ScreenManager(this);
+            Components.Add(screenManager);
+
+            AddInitialScreens();
+        }
+
+        private void AddInitialScreens()
+        {
+            screenManager.AddScreen(new MainMenuScreen(), null);
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            wizard = new WizardSprite();
-            wizardProjectiles[0] = new WizardFireballSprite();
-            wizardProjectiles[1] = new WizardFireballSprite();
-            wizardProjectiles[2] = new WizardFireballSprite();
-            wizardProjectiles[3] = new WizardFireballSprite();
-            wizardProjectiles[4] = new WizardFireballSprite();
-            wizardProjectiles[5] = new WizardFireballSprite();
-
-            Texture2D enemiesAtlas = Content.Load<Texture2D>("EnemiesAtlas");
-            brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(450, 450));
-            brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(650, 250));
-
             base.Initialize();
         }
 
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
-
-            string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
-            dungeonItemAtlas = TextureAtlasProcessor.Process(graphics.GraphicsDevice, aseDungeonItems);
-            dungeonItemAtlas.CreateRegion("Crate", new Rectangle(0,0,16,32));
-            dungeonItemAtlas.CreateRegion("Barrel", new Rectangle(16,0,16,32));
-            dungeonItemAtlas.CreateRegion("Pot", new Rectangle(32, 16, 16, 16));
-            dungeonItemAtlas.CreateRegion("PotBroken", new Rectangle(32, 32, 16, 16));
-            dungeonItemAtlas.CreateRegion("Chest", new Rectangle(96, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("ChestOpen", new Rectangle(128, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("Key", new Rectangle(33, 65, 16, 16));
-            sprite1 = dungeonItemAtlas.CreateSprite("Chest");
-            sprite2 = dungeonItemAtlas.CreateSprite("ChestOpen");
-            sprite3 = dungeonItemAtlas.CreateSprite("Key");
-
-            fireballHit = Content.Load<SoundEffect>("FireballSound");
-            wizard.LoadContent(Content);
-            foreach (WizardFireballSprite fireball in wizardProjectiles)
-            {
-                fireball.LoadContent(Content);
-            }
-            Yoster = Content.Load<SpriteFont>("Yoster");
-        }
+        protected override void LoadContent() {}
 
         protected override void Update(GameTime gameTime)
         {
-            // Wizard Logic
-            if (wizard.Exit) Exit();
-            wizard.Update(gameTime);
-            brownGoobers[0].Update(gameTime, wizard.position);
-            brownGoobers[1].Update(gameTime, wizard.position);
-
-            // Fireball Logic
-            bool newFireball = false;
-            foreach ( WizardFireballSprite fireball in wizardProjectiles )
-            {
-                foreach( BrownGoober goober in brownGoobers)
-                {   
-                    if (fireball.Bounds.CollidesWith(goober.Bounds) && fireball.Shown)
-                    {
-                        goober.Hit = true;
-                        fireball.position = new Vector2(-200, -200);
-                        fireball.Shown = false;
-                        fireballHit.Play();
-                    }
-                }
-                bool before = fireball.Shown;
-                if (!before && timeSinceLastFireball > 0.50 && !newFireball && Mouse.GetState().LeftButton == ButtonState.Pressed)
-                {
-                    newFireball = true;
-                    fireball.Update(gameTime, wizard.position, graphics.GraphicsDevice);
-                    timeSinceLastFireball = 0;
-                    break;
-                }
-
-                if( before )
-                {
-                    fireball.Update(gameTime, wizard.position, graphics.GraphicsDevice);
-                }
-            }
-            timeSinceLastFireball += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            var fontSize = Yoster.MeasureString("Retro Heroes");
-            var title = new Vector2((graphics.GraphicsDevice.PresentationParameters.Bounds.Width / 2) - fontSize.X / 2, 100f);
-
-            // TODO: Add your drawing code here
-            spriteBatch.Begin();
-            wizard.Draw(gameTime, spriteBatch);
-            brownGoobers[0].Draw(gameTime, spriteBatch);
-            brownGoobers[1].Draw(gameTime, spriteBatch);
-            foreach (WizardFireballSprite fireball in wizardProjectiles)
-            {
-                fireball.Draw(gameTime, spriteBatch);
-            }
-            spriteBatch.DrawString(Yoster, "Retro Heroes", title, Color.Goldenrod);
-            spriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
-            sprite1.Scale = new Vector2(1.5f);
-            sprite2.Scale = new Vector2(1.5f);
-            sprite3.Scale = new Vector2(4f);
-            sprite1.Draw(spriteBatch, title - new Vector2(50,0));
-            sprite2.Draw(spriteBatch, title + new Vector2(fontSize.X, 0));
-            sprite3.Draw(spriteBatch, new Vector2(title.X + fontSize.X / 2 - sprite3.Width * sprite3.ScaleX / 2, 250));
-            spriteBatch.End();
-
             base.Draw(gameTime);
         }
     }

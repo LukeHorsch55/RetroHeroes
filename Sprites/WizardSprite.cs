@@ -42,18 +42,19 @@ namespace RetroHeroes.Sprites
         /// Updates the sprite's position based on user input
         /// </summary>
         /// <param name="gameTime">The GameTime</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GraphicsDevice gd)
         {
             previousKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
             var idle = true;
             var multiplier = 150 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            var velocity = new Vector2();
 
             // Up
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
                 idle = false;
-                position += new Vector2(0, -1) * multiplier;
+                velocity += new Vector2(0, -1) * multiplier;
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -64,7 +65,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
                 idle = false;
-                position += new Vector2(0, 1) * multiplier;
+                velocity += new Vector2(0, 1) * multiplier;
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -75,7 +76,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
             {
                 idle = false;
-                position += new Vector2(-1, 0) * multiplier;
+                velocity += new Vector2(-1, 0) * multiplier;
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -87,7 +88,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
             {
                 idle = false;
-                position += new Vector2(1, 0) * multiplier;
+                velocity += new Vector2(1, 0) * multiplier;
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -114,6 +115,16 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit = true;
+            }
+
+            if (!(position.X + velocity.X < 50 || position.X + velocity.X > gd.Viewport.Width - 50))
+            {
+                position += new Vector2(velocity.X, 0);
+            }
+
+            if (!(position.Y + velocity.Y < 100 || position.Y + velocity.Y > gd.Viewport.Height - 33))
+            {
+                position += new Vector2(0, velocity.Y);
             }
         }
 

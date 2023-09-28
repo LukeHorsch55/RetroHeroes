@@ -62,7 +62,7 @@ namespace RetroHeroes.Sprites
             position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 300;
             Bounds = new BoundingCircle(position, 12);
 
-            if (position.X < 0 || position.Y < 0 || position.X > gd.Viewport.Width || position.Y < -gd.Viewport.Height)
+            if (position.X < 40 || position.Y < 75 || position.X > gd.Viewport.Width - 40 || position.Y > gd.Viewport.Height - 40)
             {
                 Shown = false;
             }

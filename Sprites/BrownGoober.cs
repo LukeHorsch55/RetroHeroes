@@ -61,7 +61,7 @@ namespace RetroHeroes.Sprites
             }
             chaseAngle.Normalize();
 
-            position += chaseAngle;
+            position += chaseAngle * Vector2.One / 1.33f;
             Bounds = new BoundingCircle(position, 15);
         }
 
