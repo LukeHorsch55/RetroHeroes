@@ -56,6 +56,12 @@
 /processorParam:TextureFormat=Color
 /build:FirstRoom.png
 
+#begin Game1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Game1.mp3
+
 #begin MainScreen.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -74,6 +80,12 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:menufont.spritefont
+
+#begin MenuMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:MenuMusic.mp3
 
 #begin wizarddeath.png
 /importer:TextureImporter

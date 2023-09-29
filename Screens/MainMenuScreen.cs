@@ -20,6 +20,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 
 namespace RetroHeroes.Screens
 {
@@ -62,6 +63,7 @@ namespace RetroHeroes.Screens
             wizardProjectiles[5] = new WizardFireballSprite();
 
             Texture2D enemiesAtlas = _content.Load<Texture2D>("EnemiesAtlas");
+            Song menuBackground = _content.Load<Song>("MenuMusic");
             background = _content.Load<Texture2D>("MainScreen");
             brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(450, 450));
             brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(650, 250));
@@ -89,6 +91,7 @@ namespace RetroHeroes.Screens
                 fireball.LoadContent(_content);
             }
             Yoster = _content.Load<SpriteFont>("Yoster");
+            MediaPlayer.Play(menuBackground);
 
             base.Activate();
         }

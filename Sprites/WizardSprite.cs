@@ -54,7 +54,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
                 idle = false;
-                velocity += new Vector2(0, -1) * multiplier;
+                velocity += new Vector2(0, -1);
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -65,7 +65,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
                 idle = false;
-                velocity += new Vector2(0, 1) * multiplier;
+                velocity += new Vector2(0, 1);
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -76,7 +76,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
             {
                 idle = false;
-                velocity += new Vector2(-1, 0) * multiplier;
+                velocity += new Vector2(-1, 0);
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -88,7 +88,7 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
             {
                 idle = false;
-                velocity += new Vector2(1, 0) * multiplier;
+                velocity += new Vector2(1, 0);
                 if (texture == idleTexture)
                 {
                     texture = runTexture;
@@ -115,6 +115,13 @@ namespace RetroHeroes.Sprites
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit = true;
+            }
+
+
+            if (velocity != Vector2.Zero)
+            {
+                velocity.Normalize();
+                velocity = velocity * multiplier;
             }
 
             if (!(position.X + velocity.X < 50 || position.X + velocity.X > gd.Viewport.Width - 50))

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace RetroHeroes.Screens
 {
@@ -61,7 +62,7 @@ namespace RetroHeroes.Screens
             brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(625, 200));
 
             // TODO: use this.Content to load your game content here
-
+            Song backgroundMusic = _content.Load<Song>("Game1");
             string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
             dungeonItemAtlas = TextureAtlasProcessor.Process(ScreenManager.GraphicsDevice, aseDungeonItems);
@@ -83,7 +84,7 @@ namespace RetroHeroes.Screens
                 fireball.LoadContent(_content);
             }
             Yoster = _content.Load<SpriteFont>("Yoster");
-
+            MediaPlayer.Play(backgroundMusic);
             base.Activate();
         }
 
