@@ -11,6 +11,7 @@ using MonoGame.Aseprite;
 using MonoGame.Aseprite.Content.Processors;
 using MonoGame.Aseprite.Sprites;
 using CollisionExample.Collisions;
+using RetroHeroes;
 
 namespace RetroHeroes.Sprites
 {

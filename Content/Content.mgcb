@@ -26,6 +26,12 @@
 /processorParam:TextureFormat=Color
 /build:blank.png
 
+#begin BrownGoobPlayerHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:BrownGoobPlayerHit.wav
+
 #begin EnemiesAtlas.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -37,6 +43,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:EnemiesAtlas.png
+
+#begin explosion.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:explosion.png
 
 #begin FireballSound.wav
 /importer:WavImporter

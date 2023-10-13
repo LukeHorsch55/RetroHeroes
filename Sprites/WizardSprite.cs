@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CollisionExample.Collisions;
+using System.Security.Cryptography.X509Certificates;
+using SharpDX.Direct3D9;
+using Microsoft.Xna.Framework.Audio;
 
 namespace RetroHeroes.Sprites
 {
@@ -22,10 +26,18 @@ namespace RetroHeroes.Sprites
 
         public Vector2 position = new Vector2(200, 200);
 
+        /// Health State
+        public BoundingRectangle Bounds;
+        public bool Hit = false;
+        public double LastHit;
+        public int Health = 10;
+
         /// Animation Variables
         private bool flipped;
         private double animationTimer;
         private short animationFrame = 1;
+
+        public SoundEffect wizardHitByGoober;
 
         /// <summary>
         /// Loads the sprite texture using the provided ContentManager
@@ -33,6 +45,7 @@ namespace RetroHeroes.Sprites
         /// <param name="content">The ContentManager to load with</param>
         public void LoadContent(ContentManager content)
         {
+            wizardHitByGoober = content.Load<SoundEffect>("BrownGoobPlayerHit");
             idleTexture = content.Load<Texture2D>("wizardidle");
             runTexture = content.Load<Texture2D>("wizardrun");
             texture = idleTexture;
@@ -133,6 +146,7 @@ namespace RetroHeroes.Sprites
             {
                 position += new Vector2(0, velocity.Y);
             }
+            Bounds = new BoundingRectangle(position.X - 32, position.Y - 32, 32, 48);
         }
 
         /// <summary>
@@ -143,9 +157,18 @@ namespace RetroHeroes.Sprites
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             animationTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            LastHit += gameTime.ElapsedGameTime.TotalSeconds;
 
             if (animationTimer > 0.15)
             {
+                if (Hit && LastHit > 0.75)
+                {
+                    wizardHitByGoober.Play(volume: 1f, pitch: 0.5f, pan: 0.5f);
+                    Hit = false;
+                    Health--;
+                    LastHit = 0f;
+                }
+
                 animationFrame++;
                 if (texture == idleTexture && animationFrame > 3) animationFrame = 0;
                 if (texture == runTexture && animationFrame > 5) animationFrame = 0;
@@ -156,7 +179,7 @@ namespace RetroHeroes.Sprites
             var scale = isIdle ? 32 : 64;
             var source = new Rectangle((isIdle && animationFrame > 3 ? animationFrame % 3 : animationFrame) * scale, isIdle ? 0 : 16, scale, isIdle ? 32 : 48);
             SpriteEffects effect = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(texture, position, source, Color.White, 0.0f, new Vector2(scale/2,isIdle ? 32 : 48), 1.5f, effect, 0);
+            spriteBatch.Draw(texture, position, source, Hit ? Color.Red : Color.White, 0.0f, new Vector2(scale/2,isIdle ? 32 : 48), 1.5f, effect, 0);
         }
     }
 }

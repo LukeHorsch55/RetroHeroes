@@ -15,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Diagnostics;
+using SharpDX.MediaFoundation;
 
 namespace RetroHeroes.Screens
 {
@@ -23,6 +25,8 @@ namespace RetroHeroes.Screens
         private ContentManager _content;
         // Fonts
         private SpriteFont Yoster;
+
+        ExplosionParticleSystem explosions;
 
         // Dungeon
         TextureAtlas dungeonItemAtlas;
@@ -60,6 +64,11 @@ namespace RetroHeroes.Screens
             background = _content.Load<Texture2D>("FirstRoom");
             brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(175, 200));
             brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(625, 200));
+
+            explosions = new ExplosionParticleSystem(ScreenManager.Game, 20);
+            explosions.Visible = false;
+            ScreenManager.Game.Components.Add(explosions);
+
 
             // TODO: use this.Content to load your game content here
             Song backgroundMusic = _content.Load<Song>("Game1");
@@ -117,10 +126,16 @@ namespace RetroHeroes.Screens
                     {
                         if (fireball.Bounds.CollidesWith(goober.Bounds) && fireball.Shown)
                         {
+                            explosions.Visible = true;
                             goober.Hit = true;
+                            explosions.PlaceExplosion(fireball.position);
                             fireball.position = new Vector2(-200, -200);
-                    
                             fireballHit.Play();
+                        }
+
+                        if (wizard.Bounds.CollidesWith(goober.Bounds))
+                        {
+                            wizard.Hit = true;
                         }
                     }
 
@@ -141,13 +156,28 @@ namespace RetroHeroes.Screens
                 timeSinceLastFireball += (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
         }
-
+        private bool _shaking = false;
+        public float _shakeTime = 0f;
         public override void Draw(GameTime gameTime)
         {
             ScreenManager.GraphicsDevice.Clear(ClearOptions.Target, Color.CornflowerBlue, 0, 0);
 
             // TODO: Add your drawing code here
-            ScreenManager.SpriteBatch.Begin();
+            if (wizard.Hit)
+            {
+                _shaking = true;
+                Matrix shakeTransform = Matrix.Identity;
+                if (_shaking)
+                {
+                    _shakeTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    shakeTransform = Matrix.CreateTranslation(2 * MathF.Sin(_shakeTime), 2 * MathF.Cos(_shakeTime), 0);
+                    if (_shakeTime > 500) _shaking = false;
+                }
+                ScreenManager.SpriteBatch.Begin(transformMatrix: shakeTransform);
+            } else
+            {
+                ScreenManager.SpriteBatch.Begin();
+            }
             ScreenManager.SpriteBatch.Draw(background, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
             wizard.Draw(gameTime, ScreenManager.SpriteBatch);
             brownGoobers[0].Draw(gameTime, ScreenManager.SpriteBatch);
