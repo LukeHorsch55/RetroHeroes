@@ -170,6 +170,8 @@ namespace RetroHeroes.Screens
             sprite1.Scale = new Vector2(1.5f);
             sprite2.Scale = new Vector2(1.5f);
             sprite3.Scale = new Vector2(4f);
+            ScreenManager.SpriteBatch.DrawString(Yoster, GameData.HighScore > 0 ? $"Current Fastest Time: ${GameData.HighScore} seconds" : "No Fastest Time Yet", new Vector2(25, 400), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
+            ScreenManager.SpriteBatch.DrawString(Yoster, $"Your Current Time: ${(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime} seconds", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
             sprite1.Draw(ScreenManager.SpriteBatch, title - new Vector2(50, 0));
             sprite2.Draw(ScreenManager.SpriteBatch, title + new Vector2(fontSize.X, 0));
             // sprite3.Draw(ScreenManager.SpriteBatch, new Vector2(title.X + fontSize.X / 2 - sprite3.Width * sprite3.ScaleX / 2, 250));

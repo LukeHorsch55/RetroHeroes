@@ -8,6 +8,7 @@ using MonoGame.Aseprite.Sprites;
 using RetroHeroes.Screens;
 using RetroHeroes.Sprites;
 using RetroHeroes.StateManagement;
+using SharpDX.Direct3D9;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -21,17 +22,49 @@ namespace RetroHeroes
 
         public RetroHeroes()
         {
-            graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            String line;
+            try
+            {
+                //Pass the file path and file name to the StreamReader constructor
+                StreamReader sr = new StreamReader(Environment.CurrentDirectory + "\\speedrecord.txt");
+                //Read the first line of text
+                line = sr.ReadLine();
+                Debug.WriteLine(line);
+                GameData.HighScore = Convert.ToInt64(line);
+                Debug.WriteLine(GameData.HighScore);
+                //Continue to read until you reach end of file
+                while (line != null)
+                {
+                    //write the line to console window
+                    Console.WriteLine(line);
+                    //Read the next line
+                    line = sr.ReadLine();
+                }
+                //close the file
+                sr.Close();
+                Console.ReadLine();
+            }
+            catch (Exception e)
+            {
+                GameData.HighScore = 0;
+                // Console.WriteLine("Exception: " + e.Message);
+            }
+            finally
+            {
+                graphics = new GraphicsDeviceManager(this);
+                Content.RootDirectory = "Content";
+                IsMouseVisible = true;
 
-            var screenFactory = new ScreenFactory();
-            Services.AddService(typeof(IScreenFactory), screenFactory);
+                var screenFactory = new ScreenFactory();
+                Services.AddService(typeof(IScreenFactory), screenFactory);
 
-            screenManager = new ScreenManager(this);
-            Components.Add(screenManager);
+                GameData.StartTime = DateTime.UtcNow.Ticks / 1000 / 1000 / 10;
 
-            AddInitialScreens();
+                screenManager = new ScreenManager(this);
+                Components.Add(screenManager);
+
+                AddInitialScreens();
+            }
         }
 
         private void AddInitialScreens()

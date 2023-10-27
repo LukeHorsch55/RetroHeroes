@@ -17,16 +17,22 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
 using SharpDX.MediaFoundation;
+using System.Reflection.Metadata;
+using SharpDX.Direct2D1;
+using System.Windows.Forms;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 
 namespace RetroHeroes.Screens
 {
-    public class FirstScreen : GameScreen
+    public class InitialBossScreen : GameScreen
     {
         private ContentManager _content;
         // Fonts
         private SpriteFont Yoster;
 
         ExplosionParticleSystem explosions;
+
+        private Tilemap tilemap;
 
         // Dungeon
         TextureAtlas dungeonItemAtlas;
@@ -52,6 +58,7 @@ namespace RetroHeroes.Screens
                 _content = new ContentManager(ScreenManager.Game.Services, "Content");
 
             // TODO: Add your initialization logic here
+            tilemap = new Tilemap("bossbattle1.txt");
             wizard = new WizardSprite() { position = new Vector2(400, ScreenManager.GraphicsDevice.Viewport.Height - 33) };
             wizardProjectiles[0] = new WizardFireballSprite();
             wizardProjectiles[1] = new WizardFireballSprite();
@@ -61,7 +68,7 @@ namespace RetroHeroes.Screens
             wizardProjectiles[5] = new WizardFireballSprite();
 
             Texture2D enemiesAtlas = _content.Load<Texture2D>("EnemiesAtlas");
-            background = _content.Load<Texture2D>("FirstRoom");
+            // background = _content.Load<Texture2D>("FirstRoom");
             brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(175, 200));
             brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(625, 200));
 
@@ -71,6 +78,7 @@ namespace RetroHeroes.Screens
 
 
             // TODO: use this.Content to load your game content here
+            tilemap.LoadContent(this._content);
             Song backgroundMusic = _content.Load<Song>("Game1");
             string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
@@ -113,12 +121,6 @@ namespace RetroHeroes.Screens
             // Wizard Logic
             if (IsActive)
             {
-                if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
-                {
-                    Debug.WriteLine("going to new screen");
-                    ScreenManager.AddScreen(new InitialBossScreen(), 0);
-                }
-
                 if (wizard.Exit) ScreenManager.Game.Exit();
                 wizard.Update(gameTime, ScreenManager.GraphicsDevice);
                 brownGoobers[0].Update(gameTime, wizard.position);
@@ -167,7 +169,6 @@ namespace RetroHeroes.Screens
         public override void Draw(GameTime gameTime)
         {
             ScreenManager.GraphicsDevice.Clear(ClearOptions.Target, Color.CornflowerBlue, 0, 0);
-
             // TODO: Add your drawing code here
             if (wizard.Hit)
             {
@@ -180,27 +181,53 @@ namespace RetroHeroes.Screens
                     if (_shakeTime > 500) _shaking = false;
                 }
                 ScreenManager.SpriteBatch.Begin(transformMatrix: shakeTransform);
-            } else
+            }
+            else
             {
                 ScreenManager.SpriteBatch.Begin();
             }
-            ScreenManager.SpriteBatch.Draw(background, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
+            // ScreenManager.SpriteBatch.Draw(background, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
+            tilemap.Draw(gameTime, ScreenManager.SpriteBatch);
             wizard.Draw(gameTime, ScreenManager.SpriteBatch);
             brownGoobers[0].Draw(gameTime, ScreenManager.SpriteBatch);
             brownGoobers[1].Draw(gameTime, ScreenManager.SpriteBatch);
+
+            long time = (DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime;
+            if (brownGoobers[0].Health <= 0 && brownGoobers[1].Health <= 0 && (GameData.HighScore == 0 || GameData.HighScore > (DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime))
+            {
+                GameData.HighScore = time;
+                try
+                {
+                    if (GameData.HighScore == 0)
+                    {
+                        File.Create(Environment.CurrentDirectory + "\\speedrecord.txt");
+                    }
+                    //Pass the filepath and filename to the StreamWriter Constructor
+                    StreamWriter sw = new StreamWriter(Environment.CurrentDirectory + "\\speedrecord.txt");
+                    
+                    //Write a line of text
+                    sw.WriteLine(time);
+                    //Close the file
+                    sw.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.Message);
+                }
+            } 
+
+            ScreenManager.SpriteBatch.DrawString(Yoster, GameData.HighScore > 0 ? $"Current Fastest Time: ${GameData.HighScore} seconds" : "No Fastest Time Yet", new Vector2(25, 400), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
+            ScreenManager.SpriteBatch.DrawString(Yoster, $"Your Current Time: ${(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime} seconds", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
             foreach (WizardFireballSprite fireball in wizardProjectiles)
             {
                 fireball.Draw(gameTime, ScreenManager.SpriteBatch);
             }
-         
-            ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
-;           ScreenManager.SpriteBatch.DrawString(Yoster, GameData.HighScore > 0 ? $"Current Fastest Time: ${GameData.HighScore} seconds" : "No Fastest Time Yet", new Vector2(25, 400), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
-            ScreenManager.SpriteBatch.DrawString(Yoster, $"Your Current Time: ${(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime} seconds", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
 
+            ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
             sprite1.Scale = new Vector2(1.5f);
             sprite2.Scale = new Vector2(1.5f);
             sprite3.Scale = new Vector2(4f);
-           
+
             ScreenManager.SpriteBatch.End();
 
             base.Draw(gameTime);
