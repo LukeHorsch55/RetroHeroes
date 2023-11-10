@@ -94,6 +94,7 @@ namespace RetroHeroes.Screens
             }
             Yoster = _content.Load<SpriteFont>("Yoster");
             MediaPlayer.Play(backgroundMusic);
+
             base.Activate();
         }
 
