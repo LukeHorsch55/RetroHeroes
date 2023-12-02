@@ -20,7 +20,7 @@ using SharpDX.MediaFoundation;
 
 namespace RetroHeroes.Screens
 {
-    public class FirstScreen : GameScreen
+    public class SecondScreen : GameScreen
     {
         private ContentManager _content;
         // Fonts
@@ -37,6 +37,7 @@ namespace RetroHeroes.Screens
 
         // Heros
         private WizardSprite wizard;
+        public int health;
         private Texture2D hearts;
 
         // Projectiles
@@ -44,7 +45,7 @@ namespace RetroHeroes.Screens
         private float timeSinceLastFireball = 0.75f;
 
         // Enemies
-        private BrownGoober[] brownGoobers = new BrownGoober[2];
+        private GreenGoober[] greenGoobers = new GreenGoober[2];
         public SoundEffect fireballHit;
 
         public override void Activate()
@@ -53,7 +54,7 @@ namespace RetroHeroes.Screens
                 _content = new ContentManager(ScreenManager.Game.Services, "Content");
 
             // TODO: Add your initialization logic here
-            wizard = new WizardSprite() { position = new Vector2(400, ScreenManager.GraphicsDevice.Viewport.Height - 33) };
+            wizard = new WizardSprite() { position = new Vector2(400, ScreenManager.GraphicsDevice.Viewport.Height - 33), Health = health };
             wizardProjectiles[0] = new WizardFireballSprite();
             wizardProjectiles[1] = new WizardFireballSprite();
             wizardProjectiles[2] = new WizardFireballSprite();
@@ -64,8 +65,8 @@ namespace RetroHeroes.Screens
             Texture2D enemiesAtlas = _content.Load<Texture2D>("EnemiesAtlas");
             hearts = _content.Load<Texture2D>("Hearts");
             background = _content.Load<Texture2D>("FirstRoom");
-            brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(175, 200));
-            brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(625, 200));
+            greenGoobers[0] = new GreenGoober(enemiesAtlas, new Vector2(175, 200));
+            greenGoobers[1] = new GreenGoober(enemiesAtlas, new Vector2(625, 200));
 
             explosions = new ExplosionParticleSystem(ScreenManager.Game, 20);
             explosions.Visible = false;
@@ -119,24 +120,24 @@ namespace RetroHeroes.Screens
                 if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
                 {
                     Debug.WriteLine("going to new screen");
-                    ScreenManager.AddScreen(new SecondScreen() { health = wizard.Health }, 0);
+                    ScreenManager.AddScreen(new YouWonScreen(), 0);
                 }
 
                 if (wizard.Health <= 0)
                 {
                     ScreenManager.AddScreen(new YouLostScreen(), 0);
-                } 
+                }
 
                 if (wizard.Exit) ScreenManager.Game.Exit();
                 wizard.Update(gameTime, ScreenManager.GraphicsDevice);
-                brownGoobers[0].Update(gameTime, wizard.position);
-                brownGoobers[1].Update(gameTime, wizard.position);
+                greenGoobers[0].Update(gameTime, wizard.position);
+                greenGoobers[1].Update(gameTime, wizard.position);
 
                 // Fireball Logic
                 bool newFireball = false;
                 foreach (WizardFireballSprite fireball in wizardProjectiles)
                 {
-                    foreach (BrownGoober goober in brownGoobers)
+                    foreach (GreenGoober goober in greenGoobers)
                     {
                         if (fireball.Bounds.CollidesWith(goober.Bounds) && fireball.Shown)
                         {
@@ -194,8 +195,8 @@ namespace RetroHeroes.Screens
             }
             ScreenManager.SpriteBatch.Draw(background, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
             wizard.Draw(gameTime, ScreenManager.SpriteBatch);
-            brownGoobers[0].Draw(gameTime, ScreenManager.SpriteBatch);
-            brownGoobers[1].Draw(gameTime, ScreenManager.SpriteBatch);
+            greenGoobers[0].Draw(gameTime, ScreenManager.SpriteBatch);
+            greenGoobers[1].Draw(gameTime, ScreenManager.SpriteBatch);
             foreach (WizardFireballSprite fireball in wizardProjectiles)
             {
                 fireball.Draw(gameTime, ScreenManager.SpriteBatch);

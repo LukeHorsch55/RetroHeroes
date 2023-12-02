@@ -30,7 +30,7 @@ namespace RetroHeroes.Sprites
         public BoundingRectangle Bounds;
         public bool Hit = false;
         public double LastHit;
-        public int Health = 10;
+        public int Health = 5;
 
         /// Animation Variables
         private bool flipped;
@@ -146,7 +146,7 @@ namespace RetroHeroes.Sprites
             {
                 position += new Vector2(0, velocity.Y);
             }
-            Bounds = new BoundingRectangle(position.X - 32, position.Y - 32, 32, 48);
+            Bounds = new BoundingRectangle(position.X - 16, position.Y - 32, 32, 48);
         }
 
         /// <summary>
@@ -161,12 +161,17 @@ namespace RetroHeroes.Sprites
 
             if (animationTimer > 0.15)
             {
-                if (Hit && LastHit > 0.75)
+
+                if (Hit && LastHit > 0.90)
                 {
-                    wizardHitByGoober.Play(volume: 1f, pitch: 0.5f, pan: 0.5f);
                     Hit = false;
                     Health--;
                     LastHit = 0f;
+                    wizardHitByGoober.Play(volume: 1f, pitch: 0.5f, pan: 0.5f);
+                }
+                if (Hit && LastHit > 0.30)
+                {
+                    Hit = false;
                 }
 
                 animationFrame++;
