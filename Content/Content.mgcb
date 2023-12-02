@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\bin\Debug\net6.0-windows\MonoGame.Aseprite.dll
+/reference:../MonoGame.Aseprite.dll
 
 #---------------------------------- Content ---------------------------------#
 

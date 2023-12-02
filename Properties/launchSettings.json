@@ -1,8 +1,7 @@
 {
   "profiles": {
-    "RetroHeroes": {
-      "commandName": "Project",
-      "workingDirectory": "C:\\Users\\lukeh\\source\\repos\\RetroHeroes"
+    "Profile 1": {
+      "commandName": "Project"
     }
   }
 }
