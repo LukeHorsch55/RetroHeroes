@@ -96,7 +96,6 @@ namespace RetroHeroes.Screens
                 fireball.LoadContent(_content);
             }
             Yoster = _content.Load<SpriteFont>("Yoster");
-            MediaPlayer.Play(backgroundMusic);
 
             base.Activate();
         }
@@ -117,10 +116,9 @@ namespace RetroHeroes.Screens
             // Wizard Logic
             if (IsActive)
             {
-                if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
+                if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110 && !greenGoobers[0].Shown && !greenGoobers[1].Shown)
                 {
-                    Debug.WriteLine("going to new screen");
-                    ScreenManager.AddScreen(new YouWonScreen(), 0);
+                    ScreenManager.AddScreen(new PowerUpSelectionScreenThree() { health = wizard.Health }, 0);
                 }
 
                 if (wizard.Health <= 0)
@@ -144,7 +142,7 @@ namespace RetroHeroes.Screens
                             explosions.Visible = true;
                             goober.Hit = true;
                             explosions.PlaceExplosion(fireball.position);
-                            fireball.position = new Vector2(-200, -200);
+                            fireball.position = new Vector2(-600, -600);
                             fireballHit.Play();
                         }
 

@@ -8,7 +8,8 @@ namespace RetroHeroes
 {
     public static class GameData
     {
-        public static long HighScore;
+        public static long HighScore = 0;
         public static long StartTime;
+        public static long FinishedScore;
     }
 }

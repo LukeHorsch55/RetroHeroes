@@ -13,7 +13,7 @@ using CollisionExample.Collisions;
 
 namespace RetroHeroes.Sprites
 {
-    public class BrownGoober
+    public class GreenFlyShooter
     {
         private Texture2D texture;
         public bool Exit = false;
@@ -24,14 +24,15 @@ namespace RetroHeroes.Sprites
         private bool flipped;
         private double animationTimer;
         private short animationFrame = 1;
+        public float timeSinceLastShot = 0f;
 
         // Collision
         public BoundingCircle Bounds;
         public bool Hit = false;
-        public int Health = 10;
+        public int Health = 5;
         public bool Shown = true;
 
-        public BrownGoober(Texture2D texture, Vector2 position)
+        public GreenFlyShooter(Texture2D texture, Vector2 position)
         {
             this.texture = texture;
             this.position = position;
@@ -61,7 +62,7 @@ namespace RetroHeroes.Sprites
             }
             chaseAngle.Normalize();
 
-            position += chaseAngle * Vector2.One / 1.33f;
+            position += chaseAngle * Vector2.One / 2f;
             Bounds = new BoundingCircle(position + new Vector2(0, 10), 15);
         }
 
@@ -83,7 +84,7 @@ namespace RetroHeroes.Sprites
                     animationTimer -= 0.25;
                 }
 
-                if( Health <= 0)
+                if (Health <= 0)
                 {
                     position = new Vector2(-600, -600);
                     Shown = false;
@@ -93,7 +94,7 @@ namespace RetroHeroes.Sprites
                 animationTimer -= 0.25;
             }
 
-            var source = new Rectangle(432 + 72 * animationFrame, 157, 72, 72);
+            var source = new Rectangle(0 + 72 * animationFrame, 148, 72, 72);
             SpriteEffects effect = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             if (Shown)
             {

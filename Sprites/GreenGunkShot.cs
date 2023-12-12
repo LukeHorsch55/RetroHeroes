@@ -15,11 +15,9 @@ using RetroHeroes;
 
 namespace RetroHeroes.Sprites
 {
-    public class WizardFireballSprite
+    public class GreenGunkShot
     {
-        private MouseState mouseState;
         private Texture2D fullSheet;
-
         public bool Shown;
         public Vector2 position;
         public Vector2 velocity;
@@ -45,14 +43,11 @@ namespace RetroHeroes.Sprites
         /// Updates the sprite's position based on user input
         /// </summary>
         /// <param name="gameTime">The GameTime</param>
-        public void Update(GameTime gameTime, Vector2 characterPosition, GraphicsDevice gd, float angleAdjust = 0f, bool doubleShot = false)
+        public void Update(GameTime gameTime, Vector2 shooterPosition, Vector2 targetPosition, GraphicsDevice gd, float angleAdjust = 0f)
         {
-            mouseState = Mouse.GetState();
-
-            if (mouseState.LeftButton == ButtonState.Pressed && Shown == false)
+            if (Shown == false)
             {
-                Vector2 adjCharacterPosition = new Vector2(characterPosition.X, characterPosition.Y - 30);
-                Vector2 shotAngle = new Vector2(mouseState.X, mouseState.Y) - (adjCharacterPosition);
+                Vector2 shotAngle = targetPosition - (shooterPosition);
                 if (angleAdjust != 0f)
                 {
                     float origAngle = (float)Math.Atan2(shotAngle.Y, shotAngle.X);
@@ -62,24 +57,17 @@ namespace RetroHeroes.Sprites
                     shotAngle = new Vector2((float)Math.Cos(adjustedAngleRadians), (float)Math.Sin(adjustedAngleRadians));
                 }
                 shotAngle.Normalize();
-                if (doubleShot)
-                {
-                    position = adjCharacterPosition + shotAngle * 30;
-                }
-                else
-                {
-                    position = adjCharacterPosition + shotAngle * 10;
-                }
+                position = shooterPosition + shotAngle * 10;
                 velocity = shotAngle;
                 Shown = true;
-                angle = (float)Math.Atan2(position.Y - adjCharacterPosition.Y, position.X - adjCharacterPosition.X);
+                angle = (float)Math.Atan2(position.Y - shooterPosition.Y, position.X - shooterPosition.X);
                 if (angleAdjust != 0f)
                 {
                     angle += angleAdjust * ((float)Math.PI / 180f);
                 }
             }
 
-            position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 300;
+            position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 250;
             Bounds = new BoundingCircle(position, 12);
 
             if (position.X < 40 || position.Y < 75 || position.X > gd.Viewport.Width - 40 || position.Y > gd.Viewport.Height - 40)
@@ -104,10 +92,10 @@ namespace RetroHeroes.Sprites
                 if (animationFrame > 3) animationFrame = 0;
             }
 
-            var source = new Rectangle(385 + (864 * animationFrame), 193, 96, 96);
+            var source = new Rectangle(288 + (864 * animationFrame), 0, 96, 96);
             if (Shown)
             {
-                spriteBatch.Draw(fullSheet, position, source, Color.White, angle, new Vector2(48, 48), new Vector2(0.25f), SpriteEffects.None, 0);
+                spriteBatch.Draw(fullSheet, position, source, Color.LightGreen, angle, new Vector2(48, 48), new Vector2(0.25f), SpriteEffects.None, 0);
             }
         }
     }

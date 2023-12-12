@@ -91,7 +91,7 @@ namespace RetroHeroes.Sprites
 
                 if( Health <= 0)
                 {
-                    position = new Vector2(-300, -300);
+                    position = new Vector2(-600, -600);
                     Shown = false;
                 }
                 animationFrame++;

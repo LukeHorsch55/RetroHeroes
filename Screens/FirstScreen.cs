@@ -116,9 +116,8 @@ namespace RetroHeroes.Screens
             // Wizard Logic
             if (IsActive)
             {
-                if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
+                if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110 && !brownGoobers[0].Shown && !brownGoobers[1].Shown)
                 {
-                    Debug.WriteLine("going to new screen");
                     ScreenManager.AddScreen(new SecondScreen() { health = wizard.Health }, 0);
                 }
 
@@ -143,7 +142,7 @@ namespace RetroHeroes.Screens
                             explosions.Visible = true;
                             goober.Hit = true;
                             explosions.PlaceExplosion(fireball.position);
-                            fireball.position = new Vector2(-200, -200);
+                            fireball.position = new Vector2(-600, -600);
                             fireballHit.Play();
                         }
 

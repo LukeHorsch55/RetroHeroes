@@ -14,9 +14,15 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace RetroHeroes.Sprites
 {
+    public enum PowerUp
+    {
+        None,
+        TripleShot,
+        DoubleShot
+    }
+
     public class WizardSprite
     {
-        private KeyboardState previousKeyboardState;
         private KeyboardState keyboardState;
 
         private Texture2D idleTexture;
@@ -25,6 +31,8 @@ namespace RetroHeroes.Sprites
         public bool Exit = false;
 
         public Vector2 position = new Vector2(200, 200);
+
+        public PowerUp powerUp = PowerUp.None;
 
         /// Health State
         public BoundingRectangle Bounds;
@@ -57,7 +65,6 @@ namespace RetroHeroes.Sprites
         /// <param name="gameTime">The GameTime</param>
         public void Update(GameTime gameTime, GraphicsDevice gd)
         {
-            previousKeyboardState = keyboardState;
             keyboardState = Keyboard.GetState();
             var idle = true;
             var multiplier = 150 * (float)gameTime.ElapsedGameTime.TotalSeconds;

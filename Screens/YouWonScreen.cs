@@ -99,6 +99,15 @@ namespace RetroHeroes.Screens
             ScreenManager.SpriteBatch.DrawString(Yoster, "You Won!", title, Color.Gold); // Change from title to Vector2.Zero
             ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 0);
             ScreenManager.SpriteBatch.DrawString(Yoster, "R to Restart", new Vector2(290, 240), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 0);
+            
+            if (GameData.HighScore > GameData.FinishedScore)
+            {
+                ScreenManager.SpriteBatch.DrawString(Yoster, "New Record of " + GameData.FinishedScore + " seconds!", new Vector2(100, 260), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 0);
+            }
+            else
+            {
+                ScreenManager.SpriteBatch.DrawString(Yoster, "No New Record, Your time was " + GameData.FinishedScore + " seconds", new Vector2(50, 280), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 0);
+            }
 
             ScreenManager.SpriteBatch.End();
          

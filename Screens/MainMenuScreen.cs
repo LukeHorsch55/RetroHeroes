@@ -141,7 +141,8 @@ namespace RetroHeroes.Screens
                 if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
                 {
                     Debug.WriteLine("going to new screen");
-                    ScreenManager.AddScreen(new FirstScreen(), 0);
+                    // ScreenManager.AddScreen(new FirstScreen(), 0);
+                    ScreenManager.AddScreen(new FifthScreen() { health = 10, powerUp = PowerUp.TripleShot }, 0); 
                 }
 
                 // Fireball Logic
