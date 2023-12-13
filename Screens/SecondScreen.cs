@@ -29,10 +29,6 @@ namespace RetroHeroes.Screens
         ExplosionParticleSystem explosions;
 
         // Dungeon
-        TextureAtlas dungeonItemAtlas;
-        private Sprite sprite1;
-        private Sprite sprite2;
-        private Sprite sprite3;
         Texture2D background;
 
         // Heros
@@ -71,23 +67,6 @@ namespace RetroHeroes.Screens
             explosions = new ExplosionParticleSystem(ScreenManager.Game, 20);
             explosions.Visible = false;
             ScreenManager.Game.Components.Add(explosions);
-
-
-            // TODO: use this.Content to load your game content here
-            Song backgroundMusic = _content.Load<Song>("Game1");
-            string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
-            dungeonItemAtlas = TextureAtlasProcessor.Process(ScreenManager.GraphicsDevice, aseDungeonItems);
-            dungeonItemAtlas.CreateRegion("Crate", new Rectangle(0, 0, 16, 32));
-            dungeonItemAtlas.CreateRegion("Barrel", new Rectangle(16, 0, 16, 32));
-            dungeonItemAtlas.CreateRegion("Pot", new Rectangle(32, 16, 16, 16));
-            dungeonItemAtlas.CreateRegion("PotBroken", new Rectangle(32, 32, 16, 16));
-            dungeonItemAtlas.CreateRegion("Chest", new Rectangle(96, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("ChestOpen", new Rectangle(128, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("Key", new Rectangle(33, 65, 16, 16));
-            sprite1 = dungeonItemAtlas.CreateSprite("Chest");
-            sprite2 = dungeonItemAtlas.CreateSprite("ChestOpen");
-            sprite3 = dungeonItemAtlas.CreateSprite("Key");
 
             fireballHit = _content.Load<SoundEffect>("FireballSound");
             wizard.LoadContent(_content);
@@ -203,10 +182,6 @@ namespace RetroHeroes.Screens
             ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
             ScreenManager.SpriteBatch.DrawString(Yoster, $"{(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime}s", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
             ScreenManager.SpriteBatch.Draw(hearts, new Vector2(600, 425), new Rectangle(0, 0, 32 * wizard.Health, 32), Color.White);
-
-            sprite1.Scale = new Vector2(1.5f);
-            sprite2.Scale = new Vector2(1.5f);
-            sprite3.Scale = new Vector2(4f);
            
             ScreenManager.SpriteBatch.End();
 

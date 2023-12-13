@@ -75,13 +75,13 @@ namespace RetroHeroes.Sprites
         {
             animationTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (animationTimer > 0.25)
+            if (animationTimer > 0.10)
             {
                 if (Hit)
                 {
                     Health--;
                     Hit = false;
-                    animationTimer -= 0.25;
+                    animationTimer -= 0.05;
                 }
 
                 if (Health <= 0)

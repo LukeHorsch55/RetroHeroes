@@ -29,10 +29,10 @@ namespace RetroHeroes.Screens
         ExplosionParticleSystem explosions;
 
         // Dungeon
-        TextureAtlas dungeonItemAtlas;
-        private Sprite heartPowerup;
-        private Sprite tripleShot;
-        private Sprite doubleShot;
+        Texture2D dungeonItemAtlas;
+        private bool heartPowerup = true;
+        private bool tripleShot = true;
+        private bool doubleShot = true;
         Texture2D background;
 
         // Heros
@@ -71,19 +71,7 @@ namespace RetroHeroes.Screens
             explosions.Visible = false;
             ScreenManager.Game.Components.Add(explosions);
 
-
-            // TODO: use this.Content to load your game content here
-            Song backgroundMusic = _content.Load<Song>("Game1");
-            string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
-            dungeonItemAtlas = TextureAtlasProcessor.Process(ScreenManager.GraphicsDevice, aseDungeonItems);
-            dungeonItemAtlas.CreateRegion("Hearts", new Rectangle(208, 48, 32, 32));
-            dungeonItemAtlas.CreateRegion("TripleShot", new Rectangle(240, 48, 32, 32));
-            dungeonItemAtlas.CreateRegion("DoubleShot", new Rectangle(272, 48, 32, 32));
-         
-            heartPowerup = dungeonItemAtlas.CreateSprite("Hearts");
-            tripleShot = dungeonItemAtlas.CreateSprite("TripleShot");
-            doubleShot = dungeonItemAtlas.CreateSprite("DoubleShot");
+            dungeonItemAtlas = _content.Load<Texture2D>("DungeonItems");
 
             fireballHit = _content.Load<SoundEffect>("FireballSound");
             powerup = _content.Load<SoundEffect>("powerup");
@@ -124,37 +112,28 @@ namespace RetroHeroes.Screens
                     ScreenManager.AddScreen(new YouLostScreen(), 0);
                 }
 
-                if (heartPowerup.IsVisible && wizard.position.X < 220 && wizard.position.X > 150 && wizard.position.Y < 270 && wizard.position.Y > 200)
+                if (heartPowerup && wizard.position.X < 220 && wizard.position.X > 150 && wizard.position.Y < 270 && wizard.position.Y > 200)
                 {
                     wizard.Health += 3;
-                    tripleShot.LayerDepth = -1;
-                    heartPowerup.LayerDepth = -1;
-                    doubleShot.LayerDepth = -1;
-                    tripleShot.IsVisible = false;
-                    heartPowerup.IsVisible = false;
-                    doubleShot.IsVisible = false;
+                    heartPowerup = false;
+                    tripleShot = false;
+                    doubleShot = false;
                     powerup.Play();
                 }
-                if (tripleShot.IsVisible && wizard.position.X < 422 && wizard.position.X > 352 && wizard.position.Y < 270 && wizard.position.Y > 200)
+                if (tripleShot && wizard.position.X < 422 && wizard.position.X > 352 && wizard.position.Y < 270 && wizard.position.Y > 200)
                 {
                     wizard.powerUp = PowerUp.TripleShot;
-                    tripleShot.LayerDepth = -1;
-                    heartPowerup.LayerDepth = -1;
-                    doubleShot.LayerDepth = -1;
-                    tripleShot.IsVisible = false;
-                    heartPowerup.IsVisible = false;
-                    doubleShot.IsVisible = false;
+                    heartPowerup = false;
+                    tripleShot = false;
+                    doubleShot = false;
                     powerup.Play();
                 }
-                if (doubleShot.IsVisible && wizard.position.X < 620 && wizard.position.X > 550 && wizard.position.Y < 270 && wizard.position.Y > 200)
+                if (doubleShot && wizard.position.X < 620 && wizard.position.X > 550 && wizard.position.Y < 270 && wizard.position.Y > 200)
                 {
                     wizard.powerUp = PowerUp.DoubleShot;
-                    tripleShot.LayerDepth = -1;
-                    heartPowerup.LayerDepth = -1;
-                    doubleShot.LayerDepth = -1;
-                    tripleShot.IsVisible = false;
-                    heartPowerup.IsVisible = false;
-                    doubleShot.IsVisible = false;
+                    heartPowerup = false;
+                    tripleShot = false;
+                    doubleShot = false;
                     powerup.Play();
                 }
 
@@ -246,9 +225,22 @@ namespace RetroHeroes.Screens
             }
             ScreenManager.SpriteBatch.Draw(background, new Rectangle(0, 0, ScreenManager.GraphicsDevice.Viewport.Width, ScreenManager.GraphicsDevice.Viewport.Height), Color.White);
 
-            heartPowerup.Draw(ScreenManager.SpriteBatch, new Vector2(150, 200));
-            tripleShot.Draw(ScreenManager.SpriteBatch, new Vector2(352, 200));
-            doubleShot.Draw(ScreenManager.SpriteBatch, new Vector2(550, 200));
+            if (heartPowerup)
+            {
+                ScreenManager.SpriteBatch.Draw(dungeonItemAtlas, new Vector2(150, 200), new Rectangle(208, 48, 32, 32), Color.White, 0f, Vector2.One, 3f, SpriteEffects.None, 0);
+            }
+            if (doubleShot)
+            {
+                ScreenManager.SpriteBatch.Draw(dungeonItemAtlas, new Vector2(352, 200), new Rectangle(240, 48, 32, 32), Color.White, 0f, Vector2.One, 3f, SpriteEffects.None, 0);
+            }
+            if (tripleShot)
+            {
+                ScreenManager.SpriteBatch.Draw(dungeonItemAtlas, new Vector2(550, 200), new Rectangle(272, 48, 32, 32), Color.White, 0f, Vector2.One, 2.5f, SpriteEffects.None, 0);
+            }
+
+            //heartPowerup.Draw(ScreenManager.SpriteBatch, new Vector2(150, 200));
+            //tripleShot.Draw(ScreenManager.SpriteBatch, new Vector2(352, 200));
+            //doubleShot.Draw(ScreenManager.SpriteBatch, new Vector2(550, 200));
             wizard.Draw(gameTime, ScreenManager.SpriteBatch);
 
             foreach (WizardFireballSprite fireball in wizardProjectiles)
@@ -259,10 +251,6 @@ namespace RetroHeroes.Screens
             ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 1);
             ScreenManager.SpriteBatch.DrawString(Yoster, $"{(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime}s", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
             ScreenManager.SpriteBatch.Draw(hearts, new Vector2(600, 425), new Rectangle(0, 0, 32 * wizard.Health, 32), Color.White);
-
-            heartPowerup.Scale = new Vector2(3f);
-            tripleShot.Scale = new Vector2(3f);
-            doubleShot.Scale = new Vector2(2.5f);
 
             ScreenManager.SpriteBatch.End();
 

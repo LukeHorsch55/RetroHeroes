@@ -1,0 +1,5 @@
+﻿All character assets are from Pixel Crawler https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack
+All mob assets are from Fantasy Dreamland Enemies Pack 2 https://elv-games.itch.io/topdown-rpg-enemies2
+All projectile effects are from Effect Bullet Impact Explosion 32x32 https://bdragon1727.itch.io/free-effect-bullet-impact-explosion-32x32
+All Sound Effects are from 50 Attack Magic SFX https://leohpaz.itch.io/50-rpg-battle-magic-sfx
+All of these packages were purchased and liscensed for use through purchase at Itch.io

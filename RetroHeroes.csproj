@@ -13,6 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Content\WizardFireProjectile.aseprite" />
+    <None Remove="MonoGame.Aseprite.dll" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Aseprite" Version="5.1.1" />

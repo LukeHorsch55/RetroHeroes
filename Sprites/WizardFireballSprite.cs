@@ -64,7 +64,7 @@ namespace RetroHeroes.Sprites
                 shotAngle.Normalize();
                 if (doubleShot)
                 {
-                    position = adjCharacterPosition + shotAngle * 30;
+                    position = adjCharacterPosition + shotAngle * 50;
                 }
                 else
                 {

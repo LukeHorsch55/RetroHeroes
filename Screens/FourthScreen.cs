@@ -29,7 +29,6 @@ namespace RetroHeroes.Screens
         ExplosionParticleSystem explosions;
 
         // Dungeon
-        TextureAtlas dungeonItemAtlas;
         Texture2D background;
 
         // Heros
@@ -73,15 +72,6 @@ namespace RetroHeroes.Screens
             explosions.Visible = false;
             ScreenManager.Game.Components.Add(explosions);
 
-
-            // TODO: use this.Content to load your game content here
-            Song backgroundMusic = _content.Load<Song>("Game1");
-            string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
-            dungeonItemAtlas = TextureAtlasProcessor.Process(ScreenManager.GraphicsDevice, aseDungeonItems);
-            dungeonItemAtlas.CreateRegion("Hearts", new Rectangle(208, 48, 32, 32));
-            dungeonItemAtlas.CreateRegion("TripleShot", new Rectangle(240, 48, 32, 32));
-            dungeonItemAtlas.CreateRegion("DoubleShot", new Rectangle(272, 48, 32, 32));
 
             fireballHit = _content.Load<SoundEffect>("FireballSound");
             powerup = _content.Load<SoundEffect>("powerup");

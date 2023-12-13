@@ -35,20 +35,12 @@ namespace RetroHeroes.Screens
     public class MainMenuScreen : GameScreen
     {
         private ContentManager _content;
-        private Model retroHeroesText;
-        private Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
-        private Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 10), new Vector3(0, 0, 0), -Vector3.UnitY);
-        private Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 100f);
 
         // Fonts
         private SpriteFont Yoster;
         BasicEffect basicEffect;
 
         // Dungeon
-        TextureAtlas dungeonItemAtlas;
-        private Sprite sprite1;
-        private Sprite sprite2;
-        private Sprite sprite3;
         Texture2D background;
 
         // Heros
@@ -79,25 +71,10 @@ namespace RetroHeroes.Screens
             Texture2D enemiesAtlas = _content.Load<Texture2D>("EnemiesAtlas");
             Song menuBackground = _content.Load<Song>("MenuMusic");
             background = _content.Load<Texture2D>("MainScreen");
-            retroHeroesText = _content.Load<Model>("retroheroes3dtext");
             brownGoobers[0] = new BrownGoober(enemiesAtlas, new Vector2(450, 450));
             brownGoobers[1] = new BrownGoober(enemiesAtlas, new Vector2(650, 250));
 
             // TODO: use this.Content to load your game content here
-
-            string sCurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AsepriteFile aseDungeonItems = AsepriteFile.Load(Directory.GetParent(sCurrentDirectory).Parent.Parent.Parent + "\\Content\\DungeonItems.aseprite");
-            dungeonItemAtlas = TextureAtlasProcessor.Process(ScreenManager.GraphicsDevice, aseDungeonItems);
-            dungeonItemAtlas.CreateRegion("Crate", new Rectangle(0, 0, 16, 32));
-            dungeonItemAtlas.CreateRegion("Barrel", new Rectangle(16, 0, 16, 32));
-            dungeonItemAtlas.CreateRegion("Pot", new Rectangle(32, 16, 16, 16));
-            dungeonItemAtlas.CreateRegion("PotBroken", new Rectangle(32, 32, 16, 16));
-            dungeonItemAtlas.CreateRegion("Chest", new Rectangle(96, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("ChestOpen", new Rectangle(128, 192, 32, 32));
-            dungeonItemAtlas.CreateRegion("Key", new Rectangle(33, 65, 16, 16));
-            sprite1 = dungeonItemAtlas.CreateSprite("Chest");
-            sprite2 = dungeonItemAtlas.CreateSprite("ChestOpen");
-            sprite3 = dungeonItemAtlas.CreateSprite("Key");
 
             fireballHit = _content.Load<SoundEffect>("FireballSound");
             wizard.LoadContent(_content);
@@ -141,8 +118,7 @@ namespace RetroHeroes.Screens
                 if (wizard.position.X > 350 && wizard.position.X < 450 && wizard.position.Y < 110)
                 {
                     Debug.WriteLine("going to new screen");
-                    // ScreenManager.AddScreen(new FirstScreen(), 0);
-                    ScreenManager.AddScreen(new FifthScreen() { health = 10, powerUp = PowerUp.TripleShot }, 0); 
+                    ScreenManager.AddScreen(new FirstScreen(), 0);
                 }
 
                 // Fireball Logic
@@ -184,47 +160,17 @@ namespace RetroHeroes.Screens
             {
                 fireball.Draw(gameTime, ScreenManager.SpriteBatch);
             }
-            // ScreenManager.SpriteBatch.DrawString(Yoster, "Retro Heroes", title, Color.Goldenrod); // Change from title to Vector2.Zero
+            ScreenManager.SpriteBatch.DrawString(Yoster, "Retro Heroes", title, Color.Goldenrod); // Change from title to Vector2.Zero
             ScreenManager.SpriteBatch.DrawString(Yoster, "ESC to Exit", new Vector2(10, 5), Color.BlanchedAlmond, 0.0f, new Vector2(0), 0.35f, SpriteEffects.None, 0);
             ScreenManager.SpriteBatch.DrawString(Yoster, "Enter the\n Dungeon", new Vector2(360, 40), Color.DarkRed, 0, new Vector2(0), 0.25f, SpriteEffects.None, 0);
             ScreenManager.SpriteBatch.DrawString(Yoster, "WASD to Move", new Vector2(290, 240), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 0);
             ScreenManager.SpriteBatch.DrawString(Yoster, "Click to Fire", new Vector2(290, 270), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 0);
-            sprite1.Scale = new Vector2(1.5f);
-            sprite2.Scale = new Vector2(1.5f);
-            sprite3.Scale = new Vector2(4f);
             ScreenManager.SpriteBatch.DrawString(Yoster, GameData.HighScore > 0 ? $"Current Fastest Time: {GameData.HighScore}s" : "No Fastest Time Yet", new Vector2(25, 400), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
             ScreenManager.SpriteBatch.DrawString(Yoster, $"Your Current Time: {(DateTime.UtcNow.Ticks / 1000 / 1000 / 10) - GameData.StartTime}s", new Vector2(25, 425), Color.LightGoldenrodYellow, 0, new Vector2(0), 0.5f, SpriteEffects.None, 1);
-            // sprite1.Draw(ScreenManager.SpriteBatch, title - new Vector2(50, 0));
-            // sprite2.Draw(ScreenManager.SpriteBatch, title + new Vector2(fontSize.X, 0));
-            // sprite3.Draw(ScreenManager.SpriteBatch, new Vector2(title.X + fontSize.X / 2 - sprite3.Width * sprite3.ScaleX / 2, 250));
 
-            // 3d
+
             ScreenManager.SpriteBatch.End();
 
-            ScreenManager.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            ScreenManager.GraphicsDevice.BlendState = BlendState.Opaque;
-            ScreenManager.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
-            Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 1), Vector3.Zero, Vector3.Up);
-            Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), ScreenManager.GraphicsDevice.Viewport.AspectRatio, 0.01f, 100f);
-
-            foreach (ModelMesh mesh in retroHeroesText.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    // Add translation to bring the text closer to the camera
-                    effect.World = Matrix.CreateTranslation(new Vector3(0, 0, 0.25f)) * Matrix.CreateRotationY( -(float)gameTime.TotalGameTime.TotalSeconds); // * Matrix.CreateRotationX(MathHelper.PiOver4);
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
-                mesh.Draw();
-            }
-
-            ScreenManager.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            ScreenManager.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            ScreenManager.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-
-            //
             base.Draw(gameTime);
         }
 
